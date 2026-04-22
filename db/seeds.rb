@@ -1,9 +1,16 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+puts "Cleaning database..."
+Article.destroy_all
+User.destroy_all
+
+puts "Creating 100 users with articles..."
+100.times do |i|
+  user = User.create!(name: FFaker::Name.name, email: FFaker::Internet.email)
+
+  rand(2..3).times do
+    user.articles.create!(title: FFaker::Book.title, body: FFaker::Lorem.paragraphs(3).join("\n\n"))
+  end
+
+  print "." if (i + 1) % 10 == 0
+end
+
+puts "\nSeed finished! Created #{User.count} users and #{Article.count} articles."
